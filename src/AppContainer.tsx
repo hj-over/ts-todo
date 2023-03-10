@@ -15,7 +15,10 @@ import {
   setDoc,
   updateDoc,
 } from "firebase/firestore";
-import { async } from "@firebase/util";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 export type TodoType = {
   uid: string;
   title: string;
@@ -133,7 +136,7 @@ const AppContainer = () => {
         body: body,
         date: date,
         sticker: sticker,
-        done: true,
+        done: false,
       });
     });
     // state 업데이트 : 화면 갱신
@@ -178,15 +181,15 @@ const AppContainer = () => {
     // 3. state를 업데이트한다.
     setTodoList(newTodoList);
 
-    localStorage.setItem(localStorageName, JSON.stringify(newTodoList));
+    // localStorage.setItem(localStorageName, JSON.stringify(newTodoList));
   };
   // 삭제기능
   const deleteTodo = async (todo: TodoType) => {
-    //firebase 데이터 1개 삭제
+    // firebase 데이터 1개 삭제
     const userDoc = doc(fireDB, firebaseStorageName, todo.uid);
     try {
       const res = await deleteDoc(userDoc);
-      console.log(res); // res는 undefined
+      // console.log(res); // res는 undefined
     } catch (e) {
       console.log(e);
     } finally {
@@ -204,9 +207,9 @@ const AppContainer = () => {
       draft.splice(index, 1);
     });
     setTodoList(newTodoList);
+
     // localStorage.setItem(localStorageName, JSON.stringify(newTodoList));
   };
-
   // 전체 목록 삭제
   const clearTodo = () => {
     setTodoList([]);
@@ -239,6 +242,37 @@ const AppContainer = () => {
 
   // 데이터목록의 타입
   const states: StatesType = { todoList };
+
+  // 사용자 로그인 기능
+  const fbLogin = (email: string, password: string) => {
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
+        console.log(user);
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log("errorCode : ", errorCode);
+        console.log("errorMessage : ", errorMessage);
+      });
+  };
+  // 사용자 가입
+  const fbJoin = (email: string, password: string) => {
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
+        console.log(user);
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log("errorCode : ", errorCode);
+        console.log("errorMessage : ", errorMessage);
+      });
+  };
 
   useEffect(() => {
     getLocalData();
