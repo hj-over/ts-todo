@@ -3,6 +3,12 @@ import { Button, Checkbox, Form, Input, Space } from "antd";
 import { useNavigate } from "react-router-dom";
 import { CallBacksFireBaseType } from "../AppContainer";
 
+// store 관련
+// useSelctor : store 의 state 가져오기
+// useDispatch : store 의 액션 실행하기
+import { useSelector, useDispatch } from "react-redux";
+import type { RootState } from "../store/store";
+
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
@@ -32,6 +38,13 @@ type PropsType = {
   callBacksFireBase: CallBacksFireBaseType;
 };
 const Login = ({ userLogin, callBacksFireBase }: PropsType) => {
+  // store 사용
+  // 액션을 실행한다.
+  // increment, decrement, incrementByAmout
+  const dispatch = useDispatch();
+  // store 의 state를 읽어온다.
+  const count = useSelector((state: RootState) => state.counter.value);
+
   const navigate = useNavigate();
   const [form] = Form.useForm();
 
